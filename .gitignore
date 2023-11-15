@@ -1,0 +1,11 @@
+
+
+build/
+dist/
+.generated_files/
+
+queuelogs/
+
+*.log
+
+*.inx
