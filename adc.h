@@ -47,5 +47,9 @@ void ADC_Init(void);
 Complex ADC_ReadComplex(void);
 
 
+/**
+ * Calibrate ADC centre points
+ */
+void ADC_Calibrate(void);
 #endif	/* XC_HEADER_TEMPLATE_H */
 

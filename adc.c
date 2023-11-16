@@ -1,5 +1,8 @@
 #include "adc.h"
 
+static float _realOffset;
+static float _imagOffset;
+
 void ADC_Init(void)
 {
     ANSELAbits.ANSELA0 = 1;
@@ -22,6 +25,9 @@ void ADC_Init(void)
     ADTRIG0Lbits.TRGSRC0 = 1;
     ADTRIG0Lbits.TRGSRC1 = 1;
     
+    _realOffset = 2047.0f;
+    _imagOffset = 2047.0f;
+    
 //    ADMOD0L = 0xF;
 }
 
@@ -38,9 +44,31 @@ Complex ADC_ReadComplex(void)
     int16_t real = (int16_t) ADCBUF0;
     int16_t imag = (int16_t) ADCBUF1;
     
-    // 1.5 is a hand calculated scaling value
+    // 1.5 is a hand calculated scaling value (now 1.62)
     return (Complex) {
-        1.55 * (real - 2047) / 2048.0f,
-        1.55 * (imag - 2047) / 2048.0f
+        1.62 * ((float)real - _realOffset) / 2048.0f,
+        1.62 * ((float)imag - _imagOffset) / 2048.0f
     };
+}
+
+void ADC_Calibrate(void)
+{
+    float realTotal = 0.0f, imagTotal = 0.0f;
+    int N = 100;
+    for (int i = 0; i < N; i++) {
+        while (!ADCON5Lbits.C0RDY);
+        while (!ADCON5Lbits.C1RDY);
+
+        ADCON3Lbits.SWCTRG = 1;
+
+        while (!ADSTATLbits.AN0RDY);
+        while (!ADSTATLbits.AN1RDY);
+
+        int16_t real = (int16_t) ADCBUF0;
+        int16_t imag = (int16_t) ADCBUF1;
+        realTotal += (float) real;
+        imagTotal += (float) imag;
+    }
+    _realOffset = realTotal / N;
+    _imagOffset = imagTotal / N;
 }

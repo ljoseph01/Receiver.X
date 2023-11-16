@@ -75,6 +75,9 @@ int main(void) {
                     while (UART1_TRANSFER_STATUS_TX_FULL & UART1_TransferStatusGet());
                     UART1_Write(0x0b);
                     break;
+                case SERIAL_ADC_CALIBRATE:
+                    ADC_Calibrate();
+                    break;
             }
         }
         

@@ -48,6 +48,7 @@
 #define SERIAL_NAME_RECEIVER            0x0B
 #define SERIAL_NOISE_UPDATE_REQ         0x0C
 #define SERIAL_NOISE_UPDATE_ACK         0x0D
+#define SERIAL_ADC_CALIBRATE            0x0E
 
 
 
